@@ -254,34 +254,67 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    var routes = [{
+        path: '/index',
+        name: 'home-section'
+    }, {
+        path: '/about',
+        name: 'about-section'
+    }];
+
+    barba.use(barbaRouter, {
+        routes
+    });
+
     $(function () {
         barba.init({
             sync: true,
+            routes: routes,
+            transitions: [{
+                from: {
 
-            transitions: [
-                {
-                    async leave(data) {
-                        const done = this.async();
+                    // define a custom rule based on the trigger class
+                    // custom: ({ trigger }) => {
+                    //     return trigger.classList && trigger.classList.contains('use-custom-transition');
+                    // },
 
-                        pageTransition();
-                        await delay(500);
-                        done();
-                    },
-
-                    async beforeEnter(data) {
-                        if (data.next.namespace === "about-section") {
-                            await aboutFunctions()
-                        } else if (data.next.namespace === "home-section") {
-                            indexFunctions();
-                        } else if (data.next.namespace === "project-section") {
-                            projectFunctions();
-                        }
-                    },
-
-                    async enter(data) {
-                        contentAnimation()
-                    }
+                    // define rule based on multiple route names
+                    route: [
+                        '/',
+                        'about'
+                    ]
+                },
+                to: {
+                    // define rule based on multiple namespaces
+                    namespace: [
+                        'home-section',
+                        'about-section'
+                    ]
                 }
+            },
+            {
+                async leave(data) {
+                    const done = this.async();
+
+                    pageTransition();
+                    await delay(500);
+                    done();
+                },
+
+                async beforeEnter(data) {
+                    if (data.next.namespace === "about-section") {
+                        await aboutFunctions()
+                    } else if (data.next.namespace === "home-section") {
+                        indexFunctions();
+                    } else if (data.next.namespace === "project-section") {
+                        projectFunctions();
+                    }
+                },
+
+                async enter(data) {
+                    contentAnimation()
+                }
+            }
             ]
 
         });
